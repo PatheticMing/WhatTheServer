@@ -46,4 +46,32 @@ class eventmanager extends PluginBase implements Listener {
         $this->wts->database->exec("UPDATE ServerLog SET last_online='$lastonline' WHERE player='$name' ");
     }
     
+    public function onBreakBlock(BlockBreakEvent $event) {
+        $name = $event->getPlayer()->getName();
+        $date = $this->wts->getDate();
+        $time = $this->wts->getTime();
+        $block = $event->getBlock();
+        $blockId = $block->getId();
+        $blockname = $block->getName();
+        $x = $block->getFloorX();
+        $y = $block->getFloorY();
+        $z = $block->getFloorZ();
+        $level = $event->getPlayer()->getLevel()->getName();
+        $this->wts->database->exec("INSERT INTO ServerLog (date , time , player , level , x , y , z , event , block) VALUES ('$date' , '$time' , '$name' , '$level' , '$x' , '$y' , '$z' , 'break block' , '$blockname')");
+    }
+    
+    public function onPlaceBlock(BlockPlaceEvent $event) {
+        $name = $event->getPlayer()->getName();
+        $date = $this->wts->getDate();
+        $time = $this->wts->getTime();
+        $block = $event->getBlock();
+        $blockId = $block->getId();
+        $blockname = $block->getName();
+        $x = $block->getFloorX();
+        $y = $block->getFloorY();
+        $z = $block->getFloorZ();
+        $level = $event->getPlayer()->getLevel()->getName();
+        $this->wts->database->exec("INSERT INTO ServerLog (date , time , player , level , x , y , z , event , block) VALUES ('$date' , '$time' , '$name' , '$level' , '$x' , '$y' , '$z' , 'place block' , '$blockname')");
+    }
+    
 }
