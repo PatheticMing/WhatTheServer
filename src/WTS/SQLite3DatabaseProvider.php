@@ -5,7 +5,7 @@ namespace WTS;
 use WTS\wts;
 use WTS\eventmanager;
 
-class SQLiteDataProvider {
+class SQLite3DatabaseProvider {
     
     private $wts , $database;
             

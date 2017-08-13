@@ -5,6 +5,7 @@ namespace WTS;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat as C;
+use WTS\command\querycommand;
 
 class wts extends PluginBase {
     
@@ -12,7 +13,7 @@ class wts extends PluginBase {
 
     public function onEnable() {
         $this->getServer()->getPluginManager()->registerEvents(new eventmanager($this), $this);
-        $this->datebase = new SQLiteDataProvider($this);
+        $this->datebase = new SQLite3DatabaseProvider($this);
         
         $querycommand = new querycommand($this);
         $this->getServer()->getCommandMap()->register($querycommand->command, $querycommand);
