@@ -5,7 +5,7 @@ namespace WTS;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat as C;
-use wts\Command\querycommand;
+use WTS\command\querycommand;
 
 class wts extends PluginBase {
     
