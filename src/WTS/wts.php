@@ -14,21 +14,23 @@ class wts extends PluginBase {
         $this->getServer()->getPluginManager()->registerEvents(new eventmanager($this), $this);
         $this->datebase = new SQLiteDataProvider($this);
         
+        $querycommand = new querycommand($this);
+        $this->getServer()->getCommandMap()->register($querycommand->command, $querycommand);
+        
         $this->getLogger()->notice("This plugin is on BETA!Using SQLite3 data provider!");
         $this->getLogger()->info(C::GOLD . "Loaded!");
     }
     
     public function fetchall($result){
         $row = array();
-        $object = 0;
-        while($r = $result->fetchArray(SQLITE3_ASSOC)){
-            $row[$object] = $r;
-            $object++;
+        $i = 0;
+        while($res = $result->fetchArray(SQLITE3_ASSOC)){
+            $row[$i] = $res;
+            $i++;
         }
         return $row;
     }
 
-    
     public function getDatabase() {
         return $this->database;
     }
@@ -39,6 +41,10 @@ class wts extends PluginBase {
     
     public function getDate() {
         return date("Y-m-d");
+    }
+    
+    public function queryServerLog($player , $pos1 , $pos2 , $date , $time) {
+        
     }
     
 }
