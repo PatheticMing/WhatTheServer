@@ -12,7 +12,7 @@ class wts extends PluginBase {
 
     public function onEnable() {
         $this->getServer()->getPluginManager()->registerEvents(new eventmanager($this), $this);
-        $this->datebase = new SQLiteDataProvider($this);
+        $this->datebase = new SQLite3DatabaseProvider($this);
         
         $querycommand = new querycommand($this);
         $this->getServer()->getCommandMap()->register($querycommand->command, $querycommand);
