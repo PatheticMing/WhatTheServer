@@ -9,6 +9,7 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat as C;
+use WTS\wts;
 
 class querycommand extends Command implements PluginIdentifiableCommand {
     
@@ -22,11 +23,11 @@ class querycommand extends Command implements PluginIdentifiableCommand {
         $this->wts = $plugin;
     }
     
-    public function getPlugin() {
+    public function getPlugin() : \pocketmine\plugin\Plugin {
         return $this->wts;
     }
     
-    public function execute(CommandSender $sender, string $commandLabel, string $args) {
+    public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
         if(empty($args)) {
             return false;
         }
