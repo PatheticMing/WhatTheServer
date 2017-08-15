@@ -1,6 +1,8 @@
 <?php
 
-namespace WTS\Command;
+namespace WTS\commands;
+
+use WTS\wts;
 
 use pocketmine\command\Command;
 use pocketmine\command\PluginIdentifiableCommand;
@@ -26,14 +28,15 @@ class querycommand extends Command implements PluginIdentifiableCommand {
         return $this->wts;
     }
     
-    public function execute(CommandSender $sender, string $commandLabel, array $args) {
-        if(empty($args)) {
-            return false;
+    public function execute(CommandSender $sender, $commandLabel, array $args) {
+        if(empty($args[0]) || empty($args[1]) || empty($args[2]) || empty($args[3]) || empty($args[4]) || empty($args[5]) || empty($args[6])) {
+            $sender->sendMessage($this->getUsage());
+        } else {
+            $pos1 = array($args[0] , $args[1] , $args[2]);
+            $pos2 = array($args[3] , $args[4] , $args[5]);
+            $time = $args[6];
+            $this->getPlugin()->queryServerLog($sender , $pos1 , $pos2 , $time);
         }
-        $time = $args[6];
-        $pos1 = new Vector3($args[0] , $args[1] , $args[2]);
-        $pos2 = new Vector3($args[3] , $args[4] , $args[5]);
-        $this->getPlugin()->queryServerLog($sender , $pos1 , $pos2 , $time);
     }
 
 }
