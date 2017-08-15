@@ -53,7 +53,7 @@ class wts extends PluginBase {
         $maxY = max($pos1[1] , $pos2[1]);
         $minY = min($pos1[1] , $pos2[1]);
         $maxZ = max($pos1[2] , $pos2[2]);
-        $minZ = min($pos1[3] , $pos2[3]);
+        $minZ = min($pos1[2] , $pos2[2]);
         $query = $this->getDatabase()->prepare("SELECT id,date,time,player,x,y,z,event,block,blockid FROM ServerLog WHERE x BETWEEN '$minX' AND '$maxX' AND y BETWEEN '$minY' AND '$maxY' AND z BETWEEN '$minZ' AND '$maxZ' ");
         $result = $query->execute();
         $data = $this->fetchall($result);
