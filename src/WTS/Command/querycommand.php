@@ -26,7 +26,7 @@ class querycommand extends Command implements PluginIdentifiableCommand {
         return $this->wts;
     }
     
-    public function execute(CommandSender $sender, string $commandLabel, string $args) {
+    public function execute(CommandSender $sender, string $commandLabel, array $args) {
         if(empty($args)) {
             return false;
         }
