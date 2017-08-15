@@ -1,0 +1,7 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/XdmingXD/WhatTheServer
+branches:
+- master
+projects:
+  WhatTheServer:
+    path: ""
+...
