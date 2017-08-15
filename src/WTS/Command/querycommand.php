@@ -29,13 +29,17 @@ class querycommand extends Command implements PluginIdentifiableCommand {
     }
     
     public function execute(CommandSender $sender, $commandLabel, array $args) {
-        if(empty($args[0]) || empty($args[1]) || empty($args[2]) || empty($args[3]) || empty($args[4]) || empty($args[5]) || empty($args[6])) {
-            $sender->sendMessage($this->getUsage());
+        if(isset($args[0]) && isset($args[1]) && isset($args[2]) && isset($args[3]) && isset($args[4]) && isset($args[5]) && isset($args[6])) {
+            if(is_numeric($args[0]) && is_numeric($args[1]) && is_numeric($args[2]) && is_numeric($args[3]) && is_numeric($args[4]) && is_numeric($args[5]) && is_numeric($args[6])) {
+                $pos1 = array($args[0] , $args[1] , $args[2]);
+                $pos2 = array($args[3] , $args[4] , $args[5]);
+                $time = $args[6];
+                $this->getPlugin()->queryServerLog($sender , $pos1 , $pos2 , $time);
+            } else {
+                $sender->sendMessage($this->getUsage());
+                }
         } else {
-            $pos1 = array($args[0] , $args[1] , $args[2]);
-            $pos2 = array($args[3] , $args[4] , $args[5]);
-            $time = $args[6];
-            $this->getPlugin()->queryServerLog($sender , $pos1 , $pos2 , $time);
+            $sender->sendMessage($this->getUsage());
         }
     }
 
