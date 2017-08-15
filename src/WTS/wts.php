@@ -47,21 +47,23 @@ class wts extends PluginBase {
         return date("Y-m-d");
     }
     
-    public function queryServerLog($player , $pos1 , $pos2 , $time) {
-        $X1 = floor($pos1->x);
-        $Y1 = floor($pos1->y);
-        $Z1 = floor($pos1->z);
-        $X2 = floor($pos2->x);
-        $Y2 = floor($pos2->y);
-        $Z2 = floor($pos2->z);
-        if($X1 < $X2 && $Y1 < $Y2 && $Z1 < $Z2) { //95 6 138 96 7
-            $query = $this->getDatabase()->prepare("SELECT id,date,time,player,x,y,z,event,block FROM ServerLog WHERE x>='$X1' AND x<='$X2' AND y>='$Y1' AND y<='$X2' AND z>='$Z1' AND z<='$Z2' ");
-            $result = $query->execute();
-            $data = $this->fetchall($result);
-            var_dump($data);
+    public function queryServerLog(Player $player , array $pos1 , array $pos2 , $time) {
+        $maxX = max($pos1[0] , $pos2[0]);
+        $minX = min($pos1[0] , $pos2[0]);
+        $maxY = max($pos1[1] , $pos2[1]);
+        $minY = min($pos1[1] , $pos2[1]);
+        $maxZ = max($pos1[2] , $pos2[2]);
+        $minZ = min($pos1[3] , $pos2[3]);  //95 6 138 96 7
+        $query = $this->getDatabase()->prepare("SELECT id,date,time,player,x,y,z,event,block,blockid FROM ServerLog WHERE x BETWEEN '$minX' AND '$maxX' AND y BETWEEN '$minY' AND '$maxY' AND z BETWEEN '$minZ' AND '$maxZ' ");
+        $result = $query->execute();
+        $data = $this->fetchall($result);
+        var_dump($data);
+        if($data != null) {
             foreach($data as $i => $value) {
-                $player->sendMessage(C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " . C::RED . $value["event"] . " at" . C::GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"]);
+                $player->sendMessage(C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " . C::RESET . $value["event"] . " " . $value["block"] . "(" . $value["blockid"] . ")" . " at" . C::GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"]);
             }
+        } else {
+            $player->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
         }
     }
     
