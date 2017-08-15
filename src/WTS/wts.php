@@ -47,17 +47,16 @@ class wts extends PluginBase {
         return date("Y-m-d");
     }
     
-    public function queryServerLog(Player $player , array $pos1 , array $pos2 , $time) {
+    public function queryServerLog($player , array $pos1 , array $pos2 , $time) {
         $maxX = max($pos1[0] , $pos2[0]);
         $minX = min($pos1[0] , $pos2[0]);
         $maxY = max($pos1[1] , $pos2[1]);
         $minY = min($pos1[1] , $pos2[1]);
         $maxZ = max($pos1[2] , $pos2[2]);
-        $minZ = min($pos1[3] , $pos2[3]);  //95 6 138 96 7
+        $minZ = min($pos1[3] , $pos2[3]);
         $query = $this->getDatabase()->prepare("SELECT id,date,time,player,x,y,z,event,block,blockid FROM ServerLog WHERE x BETWEEN '$minX' AND '$maxX' AND y BETWEEN '$minY' AND '$maxY' AND z BETWEEN '$minZ' AND '$maxZ' ");
         $result = $query->execute();
         $data = $this->fetchall($result);
-        var_dump($data);
         if($data != null) {
             foreach($data as $i => $value) {
                 $player->sendMessage(C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " . C::RESET . $value["event"] . " " . $value["block"] . "(" . $value["blockid"] . ")" . " at" . C::GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"]);
