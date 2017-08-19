@@ -1,8 +1,8 @@
 <?php
 
-namespace WTS;
+namespace WhatTheServer;
 
-use WTS\wts;
+use WhatTheServer\wts;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
