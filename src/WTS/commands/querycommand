@@ -1,8 +1,8 @@
 <?php
 
-namespace WTS\commands;
+namespace WhatTheServer\commands;
 
-use WTS\wts;
+use WhatTheServer\wts;
 
 use pocketmine\command\Command;
 use pocketmine\command\PluginIdentifiableCommand;
