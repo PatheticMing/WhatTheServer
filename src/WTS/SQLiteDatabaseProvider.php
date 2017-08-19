@@ -1,9 +1,9 @@
 <?php
 
-namespace WTS;
+namespace WhatTheServer;
 
-use WTS\wts;
-use WTS\eventmanager;
+use WhatTheServer\wts;
+use WhatTheServer\eventmanager;
 
 class SQLiteDataProvider {
     
