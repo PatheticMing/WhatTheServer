@@ -1,6 +1,6 @@
 <?php
 
-namespace WhatTherServer;
+namespace WhatTheServer;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
