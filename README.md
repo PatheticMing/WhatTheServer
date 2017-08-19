@@ -14,7 +14,7 @@ This plugin will log:
 - coming soon...
 
 Q: What does it do?
-A: It can log any player's action to blocks
+A: It can log any player's action or event
 
 Q: Can you rollback?
 A: Not now,I have just start this project
