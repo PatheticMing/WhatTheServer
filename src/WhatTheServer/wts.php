@@ -11,6 +11,7 @@ class wts extends PluginBase {
     public $database;
     
     private $data;
+    private $player;
 
     const WTS = "[WhatTheServer] ";
 
@@ -64,6 +65,43 @@ class wts extends PluginBase {
         } else {
             $player->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
         }
+    }
+
+    public function queryPlayer($sender , $name) {
+        $players = $this->getServer()->getOnlinePlayers();
+        foreach($players as $player) {
+            if(strtolower($player->getName()) == strtolower($name)) {
+                $this->player = $player->getName();
+                break;
+            }
+        }
+        if(isset($this->player)) {
+            $name = strtolower($name);
+            $query = $this->getDatabase()->prepare("SELECT join_date,last_join,last_online FROM ServerLog WHERE player='$name' ");
+            $result = $query->execute();
+            $data = $this->fetchall($result);
+            if($data != null) {
+                foreach($data as $i => $value) {
+                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::GREEN . "Player : '$name' (Online) \n" . C::AQUA . 
+                    "Joined : " . $value["join_date"] . "\n" . 
+                    "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
+                }
+            }
+        } elseif($this->getServer()->getOfflinePlayer($name) != null) {
+            $name = strtolower($name);
+            $query = $this->getDatabase()->prepare("SELECT join_date,last_join,last_online FROM ServerLog WHERE player='$name' ");
+            $result = $query->execute();
+            $data = $this->fetchall($result);
+            if($data != null) {
+                foreach($data as $i => $value) {
+                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::RED . "Player : '$name' (Offline) \n" . C::AQUA . 
+                    "Joined : " . $value["join_date"] . "\n" . 
+                    "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
+                }
+            } else {
+                $sender->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
+            }
+        } unset($this->player);
     }
     
 }
