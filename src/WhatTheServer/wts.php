@@ -16,6 +16,9 @@ class wts extends PluginBase {
     const WTS = "[WhatTheServer] ";
 
     public function onEnable() {
+        if(!is_dir($this->getDataFolder())) {
+			mkdir($this->getDataFolder());
+		}
         $this->getServer()->getPluginManager()->registerEvents(new eventmanager($this), $this);
         $this->datebase = new SQLiteDataProvider($this);
         
