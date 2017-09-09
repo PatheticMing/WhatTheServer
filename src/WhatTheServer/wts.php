@@ -17,6 +17,9 @@ class wts extends PluginBase {
 
     public function onEnable() {
         $this->getServer()->getPluginManager()->registerEvents(new eventmanager($this), $this);
+        if(!is_dir($this->getDataFolder())) {
+                @mkdir($this->getDataFolder());
+            }
         $this->datebase = new SQLiteDataProvider($this);
         
         $querycommand = new \WhatTheServer\commands\querycommand($this);
@@ -70,19 +73,22 @@ class wts extends PluginBase {
     public function queryPlayer($sender , $name) {
         $players = $this->getServer()->getOnlinePlayers();
         foreach($players as $player) {
-            if(strtolower($player->getName()) == strtolower($name)) {
+            if($player->getName() == $name) {
                 $this->player = $player->getName();
                 break;
             }
+            $this->player = null;
         }
-        if(isset($this->player)) {
+        var_dump($this->player);
+        var_dump($this->getServer()->getOfflinePlayer($name));
+        if($this->player != null) {
             $name = strtolower($name);
             $query = $this->getDatabase()->prepare("SELECT join_date,last_join,last_online FROM ServerLog WHERE player='$name' ");
             $result = $query->execute();
             $data = $this->fetchall($result);
             if($data != null) {
                 foreach($data as $i => $value) {
-                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::GREEN . "Player : '$name' (Online) \n" . C::AQUA . 
+                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------" . C::GREEN . "Player : '$name' (Online) \n" . C::AQUA . 
                     "Joined : " . $value["join_date"] . "\n" . 
                     "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
                 }
@@ -94,14 +100,14 @@ class wts extends PluginBase {
             $data = $this->fetchall($result);
             if($data != null) {
                 foreach($data as $i => $value) {
-                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::RED . "Player : '$name' (Offline) \n" . C::AQUA . 
+                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------" . C::RED . "Player : '$name' (Offline) \n" . C::AQUA . 
                     "Joined : " . $value["join_date"] . "\n" . 
                     "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
                 }
             } else {
                 $sender->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
             }
-        } unset($this->player);
+        }
     }
     
 }
