@@ -27,6 +27,7 @@ class wts extends PluginBase {
         
         $this->getLogger()->notice("This plugin is on BETA!Using SQLite3 data provider!");
         $this->getLogger()->info(C::GOLD . "Loaded!");
+        $this->database->exec('pragma synchronous = off;');
     }
     
     public function fetchall($result){
