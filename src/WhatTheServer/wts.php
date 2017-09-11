@@ -91,7 +91,7 @@ class wts extends PluginBase {
                 foreach($data as $i => $value) {
                     $sender->sendMessage(C::YELLOW . wts::WTS . "---------------" . C::GREEN . "Player : '$name' (Online) \n" . C::AQUA . 
                     "Joined : " . $value["join_date"] . "\n" . 
-                    "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
+                    "Last seen : " . $value["last_join"] . " " . $value["last_online"]);
                 }
             }
         } elseif($this->getServer()->getOfflinePlayer($name) != null) {
@@ -103,7 +103,7 @@ class wts extends PluginBase {
                 foreach($data as $i => $value) {
                     $sender->sendMessage(C::YELLOW . wts::WTS . "---------------" . C::RED . "Player : '$name' (Offline) \n" . C::AQUA . 
                     "Joined : " . $value["join_date"] . "\n" . 
-                    "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
+                    "Last seen : " . $value["last_join"] . " " . $value["last_online"]);
                 }
             } else {
                 $sender->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
