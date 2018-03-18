@@ -51,7 +51,7 @@ class wts extends PluginBase {
         return date("Y-m-d");
     }
     
-    public function queryServerLog($player , array $pos1 , array $pos2 , $time) {
+    public function queryServerLog($player , array $pos1 , array $pos2 /*, $time*/) {
         $maxX = max($pos1[0] , $pos2[0]);
         $minX = min($pos1[0] , $pos2[0]);
         $maxY = max($pos1[1] , $pos2[1]);
@@ -73,14 +73,12 @@ class wts extends PluginBase {
     public function queryPlayer($sender , $name) {
         $players = $this->getServer()->getOnlinePlayers();
         foreach($players as $player) {
-            if($player->getName() == $name) {
+            if(strtolower($player->getName()) == strtolower($name)) {
                 $this->player = $player->getName();
                 break;
             }
             $this->player = null;
         }
-        var_dump($this->player);
-        var_dump($this->getServer()->getOfflinePlayer($name));
         if($this->player != null) {
             $name = strtolower($name);
             $query = $this->getDatabase()->prepare("SELECT join_date,last_join,last_online FROM ServerLog WHERE player='$name' ");
@@ -88,7 +86,7 @@ class wts extends PluginBase {
             $data = $this->fetchall($result);
             if($data != null) {
                 foreach($data as $i => $value) {
-                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------" . C::GREEN . "Player : '$name' (Online) \n" . C::AQUA . 
+                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::GREEN . "Player : '$name' (Online) \n" . C::AQUA . 
                     "Joined : " . $value["join_date"] . "\n" . 
                     "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
                 }
@@ -100,7 +98,7 @@ class wts extends PluginBase {
             $data = $this->fetchall($result);
             if($data != null) {
                 foreach($data as $i => $value) {
-                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------" . C::RED . "Player : '$name' (Offline) \n" . C::AQUA . 
+                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::RED . "Player : '$name' (Offline) \n" . C::AQUA . 
                     "Joined : " . $value["join_date"] . "\n" . 
                     "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
                 }
