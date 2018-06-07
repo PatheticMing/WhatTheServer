@@ -27,6 +27,7 @@ class wts extends PluginBase {
         
         $this->getLogger()->notice("This plugin is on BETA!Using SQLite3 data provider!");
         $this->getLogger()->info(C::GOLD . "Loaded!");
+        $this->database->exec('pragma synchronous = off;');
     }
     
     public function fetchall($result){
@@ -88,7 +89,7 @@ class wts extends PluginBase {
                 foreach($data as $i => $value) {
                     $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::GREEN . "Player : '$name' (Online) \n" . C::AQUA . 
                     "Joined : " . $value["join_date"] . "\n" . 
-                    "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
+                    "Last seen : " . $value["last_join"] . " " . $value["last_online"]);
                 }
             }
         } elseif($this->getServer()->getOfflinePlayer($name) != null) {
@@ -100,7 +101,7 @@ class wts extends PluginBase {
                 foreach($data as $i => $value) {
                     $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::RED . "Player : '$name' (Offline) \n" . C::AQUA . 
                     "Joined : " . $value["join_date"] . "\n" . 
-                    "Last seem : " . $value["last_join"] . " " . $value["last_online"]);
+                    "Last seen : " . $value["last_join"] . " " . $value["last_online"]);
                 }
             } else {
                 $sender->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
