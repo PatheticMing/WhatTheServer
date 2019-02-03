@@ -1,5 +1,5 @@
 name: WhatTheServer
 author: XdmingXD
 main: WhatTheServer\wts
-version: 0.0.3
-api: [3.0.0-ALPHA7 , 3.0.0-ALPHA11]
+version: 0.1.0
+api: [3.0.3]
