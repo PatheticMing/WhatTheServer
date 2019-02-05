@@ -75,7 +75,7 @@ class eventmanager extends PluginBase implements Listener {
         $this->wts->database->exec("INSERT INTO ServerLog (date , time , player , level , x , y , z , event , block , blockid) VALUES ('$date' , '$time' , '$name' , '$level' , '$x' , '$y' , '$z' , 'place block' , '$blockname' , '$blockId')");
     }
 
-    public function onTransaction(InventoryTransactionEvent $event) {
+    /*public function onTransaction(InventoryTransactionEvent $event) {
         $player = $event->getTransaction()->getSource();
         $viewer = null;
         $playerinv = null;
@@ -103,6 +103,6 @@ class eventmanager extends PluginBase implements Listener {
                 }              
             }
         }
-    }
+    }*/
     
 }
