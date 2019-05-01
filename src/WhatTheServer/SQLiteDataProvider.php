@@ -14,9 +14,11 @@ class SQLiteDataProvider {
         if(!file_exists($this->wts->getDataFolder() . "ServerLog.db")) {
             $this->database = new \SQLite3($this->wts->getDataFolder() . "ServerLog.db");
             $this->database->exec("CREATE TABLE IF NOT EXISTS ServerLog
-                                            (id INTEGER PRIMARY KEY AUTOINCREMENT , date INTEGER , time INTEGER , player TEXT , 
-                                            level TEXT , x INTEGER , y INTEGER , z INTEGER , event TEXT , block TEXT , blockid INTERGER , item_transfer TEXT , 
-                                            join_date INTEGER , last_join INETEGER , last_online INTEGER);");
+                                            (id INTEGER PRIMARY KEY AUTOINCREMENT, date INTEGER, time INTEGER, player TEXT, 
+                                            level TEXT, x INTEGER, y INTEGER, z INTEGER, event TEXT, block TEXT, objectid INTERGER, 
+											item_transfered TEXT, amount INETEGER);");
+			$this->database->exec("CREATE TABLE IF NOT EXISTS PlayerLog (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+									player TEXT, identity TEXT, join_date INTEGER, last_join INETEGER, last_online INTEGER);");
             $this->wts->database = $this->database;
         } else{
             $this->database = new \SQLite3($this->wts->getDataFolder() . "ServerLog.db");
