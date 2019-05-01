@@ -45,7 +45,7 @@ class querycommand extends Command implements PluginIdentifiableCommand {
 									$sender->sendMessage($this->getUsage());
 									}
 							} elseif(!isset($args[1])) {
-								if(!$sender instanceof Player) {
+								if($sender instanceof Player) {
 									$this->getPlugin()->taptoquery = true;
 									$sender->sendMessage("Please tap on an inventory block to query :D");
 									} else {
