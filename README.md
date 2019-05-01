@@ -23,4 +23,4 @@ Q: What does it do?
 A: It can log any player's action or event
 
 Q: Can you rollback?
-A: At least not now, I will see if people want this function to be inclubed in this plugin
+A: At least not now, I will see if people want this function to be included in this plugin
