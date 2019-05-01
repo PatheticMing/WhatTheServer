@@ -1,13 +1,11 @@
 # WhatTheServer
-This is a remake of PC plugin : Core Protect but it for PocketMine edition
+This is a remake of PC plugin: Core Protect but it for PocketMine edition
 
-IMPORTANT: The 0.1.3 version update insist of changing data base structure! Please delete or backup your old data base in order to
-let the plugin works normally
+###IMPORTANT: The  database structure on the 0.1.3 version update has been changed! Please delete or backup your old database in order to let the plugin functions normally
 
-WARNING: Since I haven't really come back to work with this plugin,it has a very high chance to crash the server because the API version is very likely incompatible
+###WARNING: Since I haven't really come back to work with this plugin, it has a very high chance to crash the server because the API version is very likely to be incompatible
 
 - How to use : /wts query | query <x> <y> <z> <x2> <y2> <z2> <time> | player <username>
-- P.S. : (Time) is not implement yet , you DONNOT need to input any value for the <time> parameter
 
 This plugin will log:
 - Player first join date
