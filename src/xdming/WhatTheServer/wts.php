@@ -30,7 +30,6 @@ class wts extends PluginBase {
 		$this->taptoquery = false;
         
         $this->getLogger()->notice("This plugin is in BETA! Using SQLite3 as the data provider!");
-        $this->getLogger()->info(C::GOLD . "Loaded!");
     }
     
 	public function resetDatabase() {
