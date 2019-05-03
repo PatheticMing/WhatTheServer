@@ -28,8 +28,6 @@ class wts extends PluginBase {
         $this->getServer()->getCommandMap()->register($querycommand->command, $querycommand);
 		
 		$this->taptoquery = false;
-        
-        $this->getLogger()->notice("This plugin is in BETA! Using SQLite3 as the data provider!");
     }
     
 	public function resetDatabase() {
