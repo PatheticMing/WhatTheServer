@@ -1,8 +1,8 @@
 <?php
 
-namespace WhatTheServer;
+namespace xdming\WhatTheServer;
 
-use WhatTheServer\wts;
+use xdming\WhatTheServer\wts;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
@@ -106,9 +106,9 @@ class eventmanager implements Listener {
 	}
 	
 	/*
-	TODO
-	- cancel event, block inventory to block inventory (Windows10 edition)
-	- fetch the number that amount of item transfered (different slots)
+	To do list
+	- cancel event, block inventory to block inventory
+	- fetch the number that amount of item transferred (different slots)
 	*/
 	
 	/*
@@ -121,18 +121,20 @@ class eventmanager implements Listener {
         $viewer = null;
         $playerinv = null;
         $blockinv = null;
-		//$ptob = false;
-		//$btop = false;
+		$ptob = false;
+		$btop = false;
         foreach($event->getTransaction()->getInventories() as $inventory) {
             if($inventory->getHolder() instanceof Player) {
+				//echo'player/'; var_dump($inventory->getHolder()->getName());		
                 $playerinv = $inventory->getHolder();
 				$databaseAction = "took from " . $this->invBlock;
-				//$btop = true;
+				$btop = true;
             }
-            if(($inventory->getHolder() instanceof bc or class_exists(TrappedChest::class) or class_exists(Furnace::class)) and !$inventory->getHolder() instanceof Player) {	
+            if(($inventory->getHolder() instanceof bc or class_exists(TrappedChest::class) or class_exists(Furnace::class)) and !$inventory->getHolder() instanceof Player) {
+				//echo'block/' ;var_dump($inventory->getHolder()->getName());		
                 $blockinv = $inventory->getHolder();
 				$databaseAction = "put into " . $this->invBlock;
-				//$ptob = true;
+				$ptob = true;
             }
 			if($inventory->getHolder() instanceof Air) {
 				continue;
