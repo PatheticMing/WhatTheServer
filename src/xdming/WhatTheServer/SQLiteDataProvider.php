@@ -1,9 +1,9 @@
 <?php
 
-namespace WhatTheServer;
+namespace xdming\WhatTheServer;
 
-use WhatTheServer\wts;
-use WhatTheServer\eventmanager;
+use xdming\WhatTheServer\wts;
+use xdming\WhatTheServer\eventmanager;
 
 class SQLiteDataProvider {
     
