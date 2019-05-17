@@ -5,15 +5,17 @@ namespace xdming\WhatTheServer;
 use pocketmine\plugin\PluginBase;
 use pocketmine\Player;
 use pocketmine\item\Item;
+use pocketmine\block\Block;
 use pocketmine\item\WrittenBook;
 use pocketmine\utils\TextFormat as C;
 
 class wts extends PluginBase {
-    
+
     public $database, $taptoquery;
-    
+
     private $data;
     private $player;
+	  private $querycommand;
 
     const WTS = "[WhatTheServer] ";
 
@@ -23,20 +25,88 @@ class wts extends PluginBase {
                 @mkdir($this->getDataFolder());
             }
         $this->datebase = new SQLiteDataProvider($this);
-        
-        $querycommand = new \xdming\WhatTheServer\commands\querycommand($this);
-        $this->getServer()->getCommandMap()->register($querycommand->command, $querycommand);
-		
+		$this->database->exec("PRAGMA synchronous = 0");
+
+        $this->querycommand = new \xdming\WhatTheServer\commands\querycommand($this);
+        $this->getServer()->getCommandMap()->register($this->querycommand->command, $this->querycommand);
+
 		$this->taptoquery = false;
     }
-    
+
+    /**
+     *  $TookorPut = true = took from
+     *  $TookorPut = false = put into
+     */
+     //dumb method
+    public function findAction(int $key, bool $tookorput) {
+      if($tookorput) {
+        switch($key) {
+          case 54:
+            return 4;
+            break;
+          case 146:
+            return 6;
+            break;
+          case 61:
+            return 8;
+            break;
+        }
+      } else {
+        switch($key) {
+          case 54:
+            return 3;
+            break;
+          case 146:
+            return 5;
+            break;
+          case 61:
+            return 7;
+            break;
+        }
+      }
+    }
+
+    public function translateAction(int $key) {
+      switch($key) {
+        case 1:
+          return "placed block";
+          break;
+        case 2:
+          return "broke block";
+          break;
+        case 3:
+          return "put into chest";
+          break;
+        case 4:
+          return "took from chest";
+          break;
+        case 5:
+          return "put into trapped chest";
+          break;
+        case 6:
+          return "took from trapped chest";
+          break;
+        case 7:
+          return "put into furnace";
+          break;
+        case 8:
+          return "took from furnace";
+          break;
+      }
+    }
+
+  	public function updateFlag() {
+  		$this->querycommand->flag = false;
+      $this->taptoquery = false;
+  	}
+
 	public function resetDatabase() {
 		$query = $this->database->prepare("DELETE FROM ServerLog");
-		$result = $query->execute();
-		
+		$query->execute();
+
 		$query = $this->database->prepare("DELETE FROM sqlite_sequence WHERE name='ServerLog'");
-		$result = $query->execute();
-		
+		$query->execute();
+
 		$query = $this->database->prepare("SELECT * FROM ServerLog");
 		$result = $query->execute();
 		$data = $this->fetchall($result);
@@ -46,7 +116,7 @@ class wts extends PluginBase {
 			$$this->getServer()->getLogger()->notice("Failed to clear the database!");
 		}
 	}
-	
+
     public function fetchall($result){
         $row = array();
         $i = 0;
@@ -64,36 +134,41 @@ class wts extends PluginBase {
     public function getTime() {
         return date("H:i:s");
     }
-    
+
     public function getDate() {
         return date("Y-m-d");
     }
-	
+
 	public function generatePMessage(array $value, $i) {
 		if(isset($value["item_transfered"])) {
-			return "(" . $i . ")\n" .  C::BLUE . "[" . $value["date"] . "] " . $value["time"] . C::DARK_GREEN . " '" . $value["player"] . "' " . 
-						C::RED . $value["event"] . " " . C::DARK_GRAY . $value["item_transfered"] . "(" . $value["objectid"] . ")" . " at\n" . 
+			return "(" . $i . ")\n" .  C::BLUE . "[" . $value["date"] . "] " . $value["time"] . C::DARK_GREEN . " '" . $value["player"] . "' " .
+						C::RED . $this->translateAction($value["event"]) . " " . C::DARK_GRAY . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at\n" .
 						C::DARK_GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"] . "\n" . C::RESET;
 		} else {
-			return "(" . $i . ")\n" .  
-						C::BLUE . "[" . $value["date"] . "] " . $value["time"] . C::DARK_GREEN . " '" . $value["player"] . "' " . 
-						C::RED . $value["event"] . " " . C::DARK_GRAY . $value["block"] . "(" . $value["objectid"] . ")" . " at\n" . 
+			return "(" . $i . ")\n" .
+						C::BLUE . "[" . $value["date"] . "] " . $value["time"] . C::DARK_GREEN . " '" . $value["player"] . "' " .
+						C::RED . $this->translateAction($value["event"]) . " " . C::DARK_GRAY . Block::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at\n" .
 						C::DARK_GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"] . "\n" . C::RESET;
 		}
 	}
-    
+
 	public function generateCMessage(array $value) {
 		if(isset($value["item_transfered"])) {
-			return C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " . 
-					C::RESET . $value["event"] . " " . $value["item_transfered"] . "(" . $value["objectid"] . ")" . " at" . 
+			return C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " .
+					C::RESET . $this->translateAction($value["event"]) . " " . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at" .
 					C::GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"];
 		} else {
-			return C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " . 
-					C::RESET . $value["event"] . " " . $value["block"] . "(" . $value["objectid"] . ")" . " at" . 
+			return C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " .
+					C::RESET . $this->translateAction($value["event"]) . " " . Block::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at" .
 					C::GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"];
 		}
 	}
-	
+    /**
+     *  Each page only contain TWO records
+     *  create a new book every 50 pages
+     *  $j = the record number in a page
+     *  $i = record id
+     */
     public function queryServerLog($sender , array $pos1 , array $pos2, bool $invonly) {
         $maxX = max($pos1[0] , $pos2[0]);
         $minX = min($pos1[0] , $pos2[0]);
@@ -102,31 +177,27 @@ class wts extends PluginBase {
         $maxZ = max($pos1[2] , $pos2[2]);
         $minZ = min($pos1[2] , $pos2[2]);
 		if($invonly) {
-			$query = $this->getDatabase()->prepare("SELECT id,date,time,player,x,y,z,event,objectid,item_transfered FROM ServerLog WHERE item_transfered <> 'NULL' AND x BETWEEN '$minX' AND '$maxX' AND y BETWEEN '$minY' AND '$maxY' AND z BETWEEN '$minZ' AND '$maxZ' ORDER BY id DESC");	
+			$query = $this->getDatabase()->prepare("SELECT id,date,time,player,x,y,z,event,objectid,amount FROM ServerLog WHERE amount <> 'NULL' AND x BETWEEN '$minX' AND '$maxX' AND y BETWEEN '$minY' AND '$maxY' AND z BETWEEN '$minZ' AND '$maxZ' ORDER BY id DESC");
 		} else {
-			$query = $this->getDatabase()->prepare("SELECT date,time,player,x,y,z,event,block,objectid,item_transfered FROM ServerLog WHERE x BETWEEN '$minX' AND '$maxX' AND y BETWEEN '$minY' AND '$maxY' AND z BETWEEN '$minZ' AND '$maxZ' ");
+			$query = $this->getDatabase()->prepare("SELECT date,time,player,x,y,z,event,objectid FROM ServerLog WHERE x BETWEEN '$minX' AND '$maxX' AND y BETWEEN '$minY' AND '$maxY' AND z BETWEEN '$minZ' AND '$maxZ' ");
 			}
 		$result = $query->execute();
         $data = $this->fetchall($result);
 		if($data != null) {
 			if($sender instanceof Player) {
-				$book = Item::get(Item::WRITTEN_BOOK, 0, 1);
-				$book->setTitle(C::YELLOW . C::UNDERLINE . 
-								"[pos 1: " . C::GREEN . $pos1[0] . C::YELLOW . ", " . C::GREEN . $pos1[1] . C::YELLOW . ", " . C::GREEN . $pos1[2] . C::YELLOW . "; " .
-								"pos 2: " . C::GREEN . $pos2[0] . C::YELLOW . ", " . C::GREEN . $pos2[1] . C::YELLOW . ", " . C::GREEN . $pos2[2] . C::YELLOW . "]");
-				$book->setAuthor(C::LIGHT_PURPLE . wts::WTS);
-				$temp = $text = [];
-				$j = $page = 0;
+        $temp = $text = [];
+				$j = $page = $bookcount = 0;
 				$totalcount = count($data);
 				$mod = fmod($totalcount, 2);
+				$book = Item::get(Item::WRITTEN_BOOK, 0, 1);
 				foreach($data as $i => $value) {
 					if($totalcount != count($data) - 100) {
 						if(($j == 1)) {
 							$text[$page] = $temp[$i-1] . $this->generatePMessage($value, $i);
-							
+
 							$totalcount--;
 							$j = -1;
-							$book->setPageText($page, $text[$page]);										
+							$book->setPageText($page, $text[$page]);
 							$page++;
 						} elseif(($totalcount < 2) && ($mod != 0)) {
 							$text[$page] = $this->generatePMessage($value, $i);
@@ -137,13 +208,26 @@ class wts extends PluginBase {
 						}
 						$j++;
 					} else {
-						break;
+              $book->setTitle(C::YELLOW . C::UNDERLINE .
+                      "(" . intval($bookcount+1) . ")" . " [pos 1: " . C::GREEN . $pos1[0] . C::YELLOW . ", " . C::GREEN . $pos1[1] . C::YELLOW . ", " . C::GREEN . $pos1[2] . C::YELLOW . "; " .
+                      "pos 2: " . C::GREEN . $pos2[0] . C::YELLOW . ", " . C::GREEN . $pos2[1] . C::YELLOW . ", " . C::GREEN . $pos2[2] . C::YELLOW . "]");
+              $book->setAuthor(C::LIGHT_PURPLE . wts::WTS);
+						  $sender->getInventory()->addItem($book);
+
+              $book = Item::get(Item::WRITTEN_BOOK, 0, 1);
+              $temp = $text = [];
+      				$j = $page = 0;
+              $bookcount++;
+              $totalcount--;
 						}
 				}
-				
+        $book->setTitle(C::YELLOW . C::UNDERLINE .
+                "(" . intval($bookcount+1) . ")" . " [pos 1: " . C::GREEN . $pos1[0] . C::YELLOW . ", " . C::GREEN . $pos1[1] . C::YELLOW . ", " . C::GREEN . $pos1[2] . C::YELLOW . "; " .
+                "pos 2: " . C::GREEN . $pos2[0] . C::YELLOW . ", " . C::GREEN . $pos2[1] . C::YELLOW . ", " . C::GREEN . $pos2[2] . C::YELLOW . "]");
+        $book->setAuthor(C::LIGHT_PURPLE . wts::WTS);
 				$sender->getInventory()->addItem($book);
 				$sender->sendMessage(C::YELLOW . wts::WTS . C::AQUA . "Query has been done. " . C::RED . count($data) . C::AQUA . " records found!");
-				
+
 			} else {
 				$sender->sendMessage(C::RED . "------------------------------------------------------------------------------------------------------------");
 				foreach($data as $value) {
@@ -171,9 +255,9 @@ class wts extends PluginBase {
             $result = $query->execute();
             $data = $this->fetchall($result);
             if($data != null) {
-                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::GREEN . "Player: '$name' (Online) " . 
-					C::LIGHT_PURPLE . "(" . $data[0]["identity"] . ") \n" . 
-					C::AQUA . "Joined: " . $data[0]["join_date"] . "\n" . 
+                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::GREEN . "Player: '$name' (Online) " .
+					C::LIGHT_PURPLE . "(" . $data[0]["identity"] . ") \n" .
+					C::AQUA . "Joined: " . $data[0]["join_date"] . "\n" .
                     C::GOLD . "Last seen: ". $data[0]["last_join"] . " (" . $data[0]["last_online"] . ")");
             } else {
                 $sender->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
@@ -184,9 +268,9 @@ class wts extends PluginBase {
             $result = $query->execute();
             $data = $this->fetchall($result);
             if($data != null) {
-                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::RED . "Player: '$name' (Offline) " . 
-					C::LIGHT_PURPLE . "(" . $data[0]["identity"] . ") \n" . 
-					C::AQUA . "Joined: ". $data[0]["join_date"] . "\n" . 
+                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::RED . "Player: '$name' (Offline) " .
+					C::LIGHT_PURPLE . "(" . $data[0]["identity"] . ") \n" .
+					C::AQUA . "Joined: ". $data[0]["join_date"] . "\n" .
                     C::GOLD . "Last seen: " . $data[0]["last_join"] . " (" . $data[0]["last_online"] . ")");
             } else {
                 $sender->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
@@ -195,5 +279,5 @@ class wts extends PluginBase {
                 $sender->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
             }
     }
-    
+
 }
