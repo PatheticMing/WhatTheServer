@@ -1,5 +1,31 @@
 name: WhatTheServer
 author: XdmingXD
 main: xdming\WhatTheServer\wts
-version: 0.1.5
+version: 0.2.0
 api: [3.0.3]
+
+commands:
+  wts player:
+    permissions: yolo.command.query
+    description: "Query players' record"
+    usage: "/wts player <player's name>"
+  wts reset:
+    permissions: yolo.command.query
+    description: "Reset and delet the database"
+    usage: "/wts reset"
+  wts query:
+    permissions: yolo.command.query
+    description: "Query transactions of an inventory block"
+    usage: "/wts query"
+  wts query x1 y1 z1 x2 y2 z2:
+    permissions: yolo.command.query
+    description: "Query what the server!"
+    usage: "/wts query"
+  wts pos1:
+    permissions: yolo.command.query
+    description: "Set the first position"
+    usage: "/wts pos1"
+  wts pos2:
+    permissions: yolo.command.query
+    description: "Set the second position and query"
+    usage: "/wts pos2"
