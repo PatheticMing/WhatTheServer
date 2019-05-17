@@ -3,7 +3,7 @@ This is a remake of PC plugin: Core Protect but it for PocketMine edition
 
 #### IMPORTANT: The  database structure on the 0.1.3 version update has been changed! Please delete or backup your old database in order to let the plugin functions normally
 
-## How to use : /wts query | pos1 | pos 2 | query <x> <y> <z> <x2> <y2> <z2> <time> | player <username> | reset
+## How to use : /wts query | pos1 | pos 2 | query (x) (y) (z) (x2) (y2) (z2) | player (username) | reset
 
 This plugin will log:
 - Player first join date
