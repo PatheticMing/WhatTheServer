@@ -22,14 +22,14 @@ use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\utils\TextFormat as C;
 
 class eventmanager implements Listener {
-    
+
     private $wts , $datebase , $invBlock , $x , $y , $z;
 
     public function __construct(wts $plugin) {
         $this->wts = $plugin;
-        
+
     }
-    
+
     public function onJoin(PlayerJoinEvent $event) {
         $name = strtolower($event->getPlayer()->getName());
         $time = $this->wts->getTime();
@@ -52,14 +52,17 @@ class eventmanager implements Listener {
 			}
 		}
     }
-    
+
     public function onQuit(PlayerQuitEvent $event) {
         $name = strtolower($event->getPlayer()->getName());
         $lastjoin = $this->wts->getDate();
         $lastonline = $this->wts->getTime();
         $this->wts->database->exec("UPDATE PlayerLog SET last_join='$lastjoin', last_online='$lastonline' WHERE player='$name' ");
+
+		//reset the flag from querycommand
+		$this->wts->updateFlag();
     }
-    
+
     public function onBreakBlock(BlockBreakEvent $event) {
         $name = strtolower($event->getPlayer()->getName());
         $date = $this->wts->getDate();
@@ -67,13 +70,13 @@ class eventmanager implements Listener {
         $block = $event->getBlock();
         $blockId = $block->getId();
         $blockname = $block->getName();
-		$x = $block->getFloorX();
-		$y = $block->getFloorY();
-		$z = $block->getFloorZ();
+	      $x = $block->getFloorX();
+	      $y = $block->getFloorY();
+	      $z = $block->getFloorZ();
         $level = $event->getPlayer()->getLevel()->getName();
-        $this->wts->database->exec("INSERT INTO ServerLog (date, time, player, level, x, y, z, event, block, objectid) VALUES ('$date', '$time', '$name', '$level', '$x', '$y', '$z', 'break block', '$blockname', '$blockId')");
+        $this->wts->database->exec("INSERT INTO ServerLog (date, time, player, level, x, y, z, event, objectid) VALUES ('$date', '$time', '$name', '$level', '$x', '$y', '$z', 2, '$blockId')");
     }
-    
+
     public function onPlaceBlock(BlockPlaceEvent $event) {
         $name = strtolower($event->getPlayer()->getName());
         $date = $this->wts->getDate();
@@ -85,12 +88,12 @@ class eventmanager implements Listener {
 		$y = $block->getFloorY();
 		$z = $block->getFloorZ();
         $level = $event->getPlayer()->getLevel()->getName();
-        $this->wts->database->exec("INSERT INTO ServerLog (date, time, player, level, x, y, z, event, block, objectid) VALUES ('$date', '$time', '$name', '$level', '$x', '$y', '$z', 'place block', '$blockname', '$blockId')");
+        $this->wts->database->exec("INSERT INTO ServerLog (date, time, player, level, x, y, z, event, objectid) VALUES ('$date', '$time', '$name', '$level', '$x', '$y', '$z', 1, '$blockId')");
     }
 
 	public function onInteraction(PlayerInteractEvent $event) {
 		if($event->getBlock() instanceof bc or class_exists(Furnace::class) or TrappedChest) {
-		$this->invBlock = $event->getBlock()->getName();
+		$this->invBlock = $event->getBlock()->getId();
 		$this->x = $event->getBlock()->getFloorX();
 		$this->y = $event->getBlock()->getFloorY();
 		$this->z = $event->getBlock()->getFloorZ();
@@ -99,46 +102,44 @@ class eventmanager implements Listener {
 			$pos1[1] = $pos2[1] = $event->getBlock()->getFloorY();
 			$pos1[2] = $pos2[2] = $event->getBlock()->getFloorZ();
 			$this->wts->queryServerLog($event->getPlayer(), $pos1, $pos2, true);
-			$this->wts->taptoquery = false;
 			$event->setCancelled();
 			}
 		}
 	}
-	
+
 	/*
 	To do list
 	- cancel event, block inventory to block inventory
 	- fetch the number that amount of item transferred (different slots)
 	*/
-	
+
 	/*
 	player to chest: player->chest(block)->chest(block)
 	chest to player: chest(block)->player->player(block)
 	*/
     public function onTransaction(InventoryTransactionEvent $event) {
-		//echo('hi/');
         $player = $event->getTransaction()->getSource();
         $viewer = null;
         $playerinv = null;
         $blockinv = null;
-		$ptob = false;
-		$btop = false;
+	      $ptob = false;
+        $btop = false;
         foreach($event->getTransaction()->getInventories() as $inventory) {
             if($inventory->getHolder() instanceof Player) {
-				//echo'player/'; var_dump($inventory->getHolder()->getName());		
+				    //echo'player/'; var_dump($inventory->getHolder()->getName());
                 $playerinv = $inventory->getHolder();
-				$databaseAction = "took from " . $this->invBlock;
-				$btop = true;
+		            $databaseAction = $this->wts->findAction($this->invBlock, true);
+	              $btop = true;
             }
             if(($inventory->getHolder() instanceof bc or class_exists(TrappedChest::class) or class_exists(Furnace::class)) and !$inventory->getHolder() instanceof Player) {
-				//echo'block/' ;var_dump($inventory->getHolder()->getName());		
+	          //echo'block/' ;var_dump($inventory->getHolder()->getName());
                 $blockinv = $inventory->getHolder();
-				$databaseAction = "put into " . $this->invBlock;
-				$ptob = true;
+		            $databaseAction = $this->wts->findAction($this->invBlock, false);
+                $ptob = true;
             }
-			if($inventory->getHolder() instanceof Air) {
-				continue;
-			}
+        		if($inventory->getHolder() instanceof Air) {
+        			continue;
+        		}
         }
         if(isset($playerinv) and isset($blockinv) and $playerinv != $blockinv) {
             $trActions = $event->getTransaction()->getActions();
@@ -146,19 +147,18 @@ class eventmanager implements Listener {
                 if($action->getSourceItem()->getId() == 0) {
                     continue;
                 } else {
-                    $item = $action->getSourceItem()->getName();
-					$objectid = $action->getSourceItem()->getId();
-					$amount = $action->getSourceItem()->getCount();
-					
-					$name = strtolower($player->getName());
-					$date = $this->wts->getDate();
-					$time = $this->wts->getTime();
+			              $objectid = $action->getSourceItem()->getId();
+            				$amount = $action->getSourceItem()->getCount();
 
-					$level = $player->getLevel()->getName();
-                    $this->wts->database->exec("INSERT INTO ServerLog (date, time, player, level, x, y, z, event, objectid, item_transfered, amount) VALUES ('$date', '$time', '$name', '$level', '$this->x', '$this->y', '$this->z', '$databaseAction', '$objectid', '$item', $amount)");
-                }              
+            				$name = strtolower($player->getName());
+            				$date = $this->wts->getDate();
+            				$time = $this->wts->getTime();
+
+            				$level = $player->getLevel()->getName();
+                    $this->wts->database->exec("INSERT INTO ServerLog (date, time, player, level, x, y, z, event, objectid, amount) VALUES ('$date', '$time', '$name', '$level', '$this->x', '$this->y', '$this->z', '$databaseAction', '$objectid', $amount)");
+                }
             }
         }
     }
-    
+
 }
