@@ -15,7 +15,7 @@ commands:
     usage: "/wts reset"
   wts query:
     permissions: yolo.command.query
-    description: "Query transactions of an inventory block"
+    description: "Transactions query mode"
     usage: "/wts query"
   wts query x1 y1 z1 x2 y2 z2:
     permissions: yolo.command.query
