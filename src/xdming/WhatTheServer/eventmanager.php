@@ -126,13 +126,11 @@ class eventmanager implements Listener {
         $btop = false;
         foreach($event->getTransaction()->getInventories() as $inventory) {
             if($inventory->getHolder() instanceof Player) {
-				    //echo'player/'; var_dump($inventory->getHolder()->getName());
                 $playerinv = $inventory->getHolder();
 		            $databaseAction = $this->wts->findAction($this->invBlock, true);
 	              $btop = true;
             }
             if(($inventory->getHolder() instanceof bc or class_exists(TrappedChest::class) or class_exists(Furnace::class)) and !$inventory->getHolder() instanceof Player) {
-	          //echo'block/' ;var_dump($inventory->getHolder()->getName());
                 $blockinv = $inventory->getHolder();
 		            $databaseAction = $this->wts->findAction($this->invBlock, false);
                 $ptob = true;
