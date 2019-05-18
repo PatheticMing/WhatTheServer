@@ -27,7 +27,7 @@ class eventmanager implements Listener {
 
     public function __construct(wts $plugin) {
         $this->wts = $plugin;
-
+        $this->invBlock = 0;
     }
 
     public function onJoin(PlayerJoinEvent $event) {
@@ -91,21 +91,43 @@ class eventmanager implements Listener {
         $this->wts->database->exec("INSERT INTO ServerLog (date, time, player, level, x, y, z, event, objectid) VALUES ('$date', '$time', '$name', '$level', '$x', '$y', '$z', 1, '$blockId')");
     }
 
+  /**
+   *  $pos1 = Block that player touch
+   *  $pos2 = Position of the paired chest if it exists
+   */
 	public function onInteraction(PlayerInteractEvent $event) {
-		if($event->getBlock() instanceof bc or class_exists(Furnace::class) or TrappedChest) {
-		$this->invBlock = $event->getBlock()->getId();
-		$this->x = $event->getBlock()->getFloorX();
-		$this->y = $event->getBlock()->getFloorY();
-		$this->z = $event->getBlock()->getFloorZ();
-		if($this->wts->taptoquery) {
-			$pos1[0] = $pos2[0] = $event->getBlock()->getFloorX();
-			$pos1[1] = $pos2[1] = $event->getBlock()->getFloorY();
-			$pos1[2] = $pos2[2] = $event->getBlock()->getFloorZ();
-			$this->wts->queryServerLog($event->getPlayer(), $pos1, $pos2, true);
-			$event->setCancelled();
-			}
-		}
-	}
+		if($event->getBlock() instanceof bc or Furnace::class or TrappedChest::class) {
+    		$this->invBlock = $event->getBlock()->getId();
+    		$this->x = $event->getBlock()->getFloorX();
+    		$this->y = $event->getBlock()->getFloorY();
+    		$this->z = $event->getBlock()->getFloorZ();
+		  if($this->wts->taptoquery) {
+        if(($event->getBlock() instanceof bc) or ($event->getBlock() instanceof TrappedChest)) {
+          $tile = $event->getPlayer()->getLevel()->getTile(new \pocketmine\math\Vector3($this->x, $this->y, $this->z));
+          if($tile->isPaired()) {
+            $pair = $tile->getPair();
+            $pos1[0] = $event->getBlock()->getFloorX();
+      			$pos1[1] = $event->getBlock()->getFloorY();
+      			$pos1[2] = $event->getBlock()->getFloorZ();
+
+            $pos2[0] = $tile->getBlock()->getFloorX();
+      			$pos2[1] = $tile->getBlock()->getFloorY();
+      			$pos2[2] = $tile->getBlock()->getFloorZ();
+          } else {
+                $pos1[0] = $pos2[0] = $event->getBlock()->getFloorX();
+                $pos1[1] = $pos2[1] = $event->getBlock()->getFloorY();
+                $pos1[2] = $pos2[2] = $event->getBlock()->getFloorZ();
+              }
+    		} else {
+            $pos1[0] = $pos2[0] = $event->getBlock()->getFloorX();
+            $pos1[1] = $pos2[1] = $event->getBlock()->getFloorY();
+            $pos1[2] = $pos2[2] = $event->getBlock()->getFloorZ();
+          }
+        $this->wts->queryServerLog($event->getPlayer(), $pos1, $pos2, true);
+        $event->setCancelled();
+      }
+    }
+  }
 
 	/*
 	To do list
@@ -126,11 +148,13 @@ class eventmanager implements Listener {
         $btop = false;
         foreach($event->getTransaction()->getInventories() as $inventory) {
             if($inventory->getHolder() instanceof Player) {
+				    //echo'player/'; var_dump($inventory->getHolder()->getName());
                 $playerinv = $inventory->getHolder();
 		            $databaseAction = $this->wts->findAction($this->invBlock, true);
 	              $btop = true;
             }
             if(($inventory->getHolder() instanceof bc or class_exists(TrappedChest::class) or class_exists(Furnace::class)) and !$inventory->getHolder() instanceof Player) {
+	          //echo'block/' ;var_dump($inventory->getHolder()->getName());
                 $blockinv = $inventory->getHolder();
 		            $databaseAction = $this->wts->findAction($this->invBlock, false);
                 $ptob = true;

@@ -50,6 +50,8 @@ class wts extends PluginBase {
           case 61:
             return 8;
             break;
+          default:
+            break;
         }
       } else {
         switch($key) {
@@ -61,6 +63,8 @@ class wts extends PluginBase {
             break;
           case 61:
             return 7;
+            break;
+          default:
             break;
         }
       }
@@ -140,26 +144,26 @@ class wts extends PluginBase {
     }
 
 	public function generatePMessage(array $value, $i) {
-		if(isset($value["item_transfered"])) {
+		if(isset($value["amount"])) {
 			return "(" . $i . ")\n" .  C::BLUE . "[" . $value["date"] . "] " . $value["time"] . C::DARK_GREEN . " '" . $value["player"] . "' " .
 						C::RED . $this->translateAction($value["event"]) . " " . C::DARK_GRAY . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at\n" .
 						C::DARK_GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"] . "\n" . C::RESET;
 		} else {
 			return "(" . $i . ")\n" .
 						C::BLUE . "[" . $value["date"] . "] " . $value["time"] . C::DARK_GREEN . " '" . $value["player"] . "' " .
-						C::RED . $this->translateAction($value["event"]) . " " . C::DARK_GRAY . Block::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at\n" .
+						C::RED . $this->translateAction($value["event"]) . " " . C::DARK_GRAY . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at\n" .
 						C::DARK_GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"] . "\n" . C::RESET;
 		}
 	}
 
 	public function generateCMessage(array $value) {
-		if(isset($value["item_transfered"])) {
+		if(isset($value["amount"])) {
 			return C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " .
 					C::RESET . $this->translateAction($value["event"]) . " " . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at" .
 					C::GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"];
 		} else {
 			return C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " .
-					C::RESET . $this->translateAction($value["event"]) . " " . Block::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at" .
+					C::RESET . $this->translateAction($value["event"]) . " " . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at" .
 					C::GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"];
 		}
 	}
