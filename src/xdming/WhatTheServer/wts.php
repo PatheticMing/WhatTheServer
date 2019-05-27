@@ -124,7 +124,7 @@ class wts extends PluginBase {
     public function fetchall($result){
         $row = array();
         $i = 0;
-        while($res = $result->fetchArray(SQLITE3_ASSOC)){
+        while($res = $result->fetchArray(SQLITE3_ASSOC)) {
             $row[$i] = $res;
             $i++;
         }
@@ -146,8 +146,8 @@ class wts extends PluginBase {
 	public function generatePMessage(array $value, $i) {
 		if(isset($value["amount"])) {
 			return "(" . $i . ")\n" .  C::BLUE . "[" . $value["date"] . "] " . $value["time"] . C::DARK_GREEN . " '" . $value["player"] . "' " .
-						C::RED . $this->translateAction($value["event"]) . " " . C::DARK_GRAY . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at\n" .
-						C::DARK_GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"] . "\n" . C::RESET;
+						C::RED . $this->translateAction($value["event"]) . " " . C::DARK_GRAY . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ") x" .
+            $value["amount"] . " at\n" .	C::DARK_GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"] . "\n" . C::RESET;
 		} else {
 			return "(" . $i . ")\n" .
 						C::BLUE . "[" . $value["date"] . "] " . $value["time"] . C::DARK_GREEN . " '" . $value["player"] . "' " .
@@ -159,8 +159,8 @@ class wts extends PluginBase {
 	public function generateCMessage(array $value) {
 		if(isset($value["amount"])) {
 			return C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " .
-					C::RESET . $this->translateAction($value["event"]) . " " . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at" .
-					C::GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"];
+					C::RESET . $this->translateAction($value["event"]) . " " . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ") x" .
+          $value["amount"] . " at" . C::GREEN . " x= " . $value["x"] . " y= " . $value["y"] . " z= " . $value["z"];
 		} else {
 			return C::YELLOW . wts::WTS . C::AQUA . "[" . $value["date"] . "] " . $value["time"] . C::GOLD . " '" . $value["player"] . "' " .
 					C::RESET . $this->translateAction($value["event"]) . " " . Item::get($value["objectid"])->getName() . "(" . $value["objectid"] . ")" . " at" .
@@ -272,10 +272,11 @@ class wts extends PluginBase {
             $result = $query->execute();
             $data = $this->fetchall($result);
             if($data != null) {
-                    $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" . C::RED . "Player: '$name' (Offline) " .
-					C::LIGHT_PURPLE . "(" . $data[0]["identity"] . ") \n" .
-					C::AQUA . "Joined: ". $data[0]["join_date"] . "\n" .
-                    C::GOLD . "Last seen: " . $data[0]["last_join"] . " (" . $data[0]["last_online"] . ")");
+              $sender->sendMessage(C::YELLOW . wts::WTS . "---------------\n" .
+                                   C::RED . "Player: '$name' (Offline) " .
+                        					 C::LIGHT_PURPLE . "(" . $data[0]["identity"] . ") \n" .
+      					                   C::AQUA . "Joined: ". $data[0]["join_date"] . "\n" .
+                                   C::GOLD . "Last seen: " . $data[0]["last_join"] . " (" . $data[0]["last_online"] . ")");
             } else {
                 $sender->sendMessage(C::YELLOW . wts::WTS . C::RED . "Cannot find any data!");
             }

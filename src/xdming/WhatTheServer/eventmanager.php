@@ -106,13 +106,13 @@ class eventmanager implements Listener {
           $tile = $event->getPlayer()->getLevel()->getTile(new \pocketmine\math\Vector3($this->x, $this->y, $this->z));
           if($tile->isPaired()) {
             $pair = $tile->getPair();
-            $pos1[0] = $event->getBlock()->getFloorX();
-      			$pos1[1] = $event->getBlock()->getFloorY();
-      			$pos1[2] = $event->getBlock()->getFloorZ();
+            $pos1[0] = $tile->getBlock()->getFloorX();
+      		  $pos1[1] = $tile->getBlock()->getFloorY();
+      		  $pos1[2] = $tile->getBlock()->getFloorZ();
 
-            $pos2[0] = $tile->getBlock()->getFloorX();
-      			$pos2[1] = $tile->getBlock()->getFloorY();
-      			$pos2[2] = $tile->getBlock()->getFloorZ();
+            $pos2[0] = $pair->getBlock()->getFloorX();
+      		  $pos2[1] = $pair->getBlock()->getFloorY();
+      		  $pos2[2] = $pair->getBlock()->getFloorZ();
           } else {
                 $pos1[0] = $pos2[0] = $event->getBlock()->getFloorX();
                 $pos1[1] = $pos2[1] = $event->getBlock()->getFloorY();
